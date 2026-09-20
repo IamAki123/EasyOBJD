@@ -36,7 +36,7 @@ import java.util.List;
  * <pre>
  * maven { url = 'https://jitpack.io' }
  * implementation 'org.openftc:easyopencv:1.7.3'
- * implementation 'com.github.IamAki123:EasyOBJD:1.0.0'
+ * implementation 'com.github.IamAki123:EasyOBJD:1.0.1'
  * </pre>
  * Then File → Sync Project with Gradle Files.
  */

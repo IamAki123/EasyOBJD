@@ -27,7 +27,7 @@ It does **not** replace a Limelight or a custom ML pipeline if you already trust
 
 **Expected accuracy:** measure *your* robot. With a taped lens height/tilt, a real ball diameter, and a clean mask at 2–4 ft, **a couple of inches** of Y error is a common good result — not a guarantee. Lighting, glare, and wide-angle distortion dominate. Error that *grows toward the image edge* is usually an undistorted lens, not a missing filter. How to score tape vs vision: [Tuning](docs/Tuning.md).
 
-**Current release:** 1.0.0. JitPack: `com.github.IamAki123:EasyOBJD:1.0.0`. Copy [`EasyOBJDSample`](samples/EasyOBJDSample.java), run it, D-pad HSV. Optional UserConfig / Calibrate if you want saved inches.
+**Current release:** 1.0.1. JitPack: `com.github.IamAki123:EasyOBJD:1.0.1`. Copy [`EasyOBJDSample`](samples/EasyOBJDSample.java), run it, D-pad HSV. Optional UserConfig / Calibrate if you want saved inches.
 
 ## First time here?
 
@@ -69,7 +69,7 @@ Then in `TeamCode/build.gradle`, inside `dependencies`:
 
 ```gradle
 implementation 'org.openftc:easyopencv:1.7.3'
-implementation 'com.github.IamAki123:EasyOBJD:1.0.0'
+implementation 'com.github.IamAki123:EasyOBJD:1.0.1'
 ```
 
 **Sync:** File → Sync Project with Gradle Files. Use Android Studio’s Embedded JDK for the Gradle JVM.

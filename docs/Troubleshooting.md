@@ -10,7 +10,7 @@
    `maven { url = 'https://jitpack.io' }`
 2. In `TeamCode/build.gradle` `dependencies`:
    `implementation 'org.openftc:easyopencv:1.7.3'`
-   `implementation 'com.github.IamAki123:EasyOBJD:1.0.0'`
+   `implementation 'com.github.IamAki123:EasyOBJD:1.0.1'`
 3. File → Sync Project with Gradle Files.
 
 Opening `samples/EasyOBJDSample.java` **inside this library repo** is only for editing. Copy it into TeamCode to run on a robot. First JitPack build of a tag can take a minute.

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.0.1
+
 ### Changed
 - Tiny public types: `OverlayMode` (top-level, same as JitPack 1.0.0), `EasyOBJD.LocalizationMethod`, `EasyOBJD.IntakeHeuristic`, `ClusterInfo.Ball`. Grid grouping moved into `LocalizationMath.java`.
 - Removed `EasyOBD*` compatibility classes. Use `EasyOBJD` / `EasyOBJDPipeline` / `EasyOBJDConfig` / `EasyOBJDCalibration`.
