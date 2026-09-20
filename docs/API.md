@@ -2,7 +2,7 @@
 
 [README](../README.md) · [Library files](LibraryFiles.md) · [Sample OpMode](SampleOpMode.md)
 
-Package: `org.firstinspires.ftc.easyobjd`. Current JitPack: **1.0.1**.
+Package: `org.firstinspires.ftc.easyobjd`. Current JitPack: **1.0.2**.
 
 ## EasyOBJD
 

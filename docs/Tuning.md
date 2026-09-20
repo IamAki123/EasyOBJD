@@ -8,15 +8,15 @@ Tune in **practice**, not matches. Change **one** thing at a time. Geometry (hei
 EasyOBJD.createPipeline()
         │
         ▼
-EasyOBJD Sample  —  D-pad HSV in the same OpMode
+EasyOBJD Cluster  —  12×12 grid, D-pad HSV in the same OpMode
         │
         ▼
 optional UserConfig / Calibrate  —  saved HSV and camera inches
 ```
 
-## 1. HSV — EasyOBJD Sample (or Tuner)
+## 1. HSV — EasyOBJD Cluster (or Tuner)
 
-Driver Station → **EasyOBJD Sample**. Preview starts on **MASK**. D-pad HSV is on that OpMode, same as the first release.
+Driver Station → **EasyOBJD Cluster**. Preview starts on **FULL** (12×12 regions). D-pad left to **MASK** if you only want the color filter. D-pad HSV is on that OpMode.
 
 **EasyOBJD Tuner** is optional if you want MASK plus copy-paste `H_LOW`…`V_HIGH` lines.
 

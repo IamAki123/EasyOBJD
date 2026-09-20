@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 1.0.2
+
+### Changed
+- First-run sample is [`EasyOBJDCluster`](samples/EasyOBJDCluster.java): 12×12 grid overlay, D-pad HSV, left/right overlay cycle. Replaces `EasyOBJDSample`.
+
 ## 1.0.1
 
 ### Changed

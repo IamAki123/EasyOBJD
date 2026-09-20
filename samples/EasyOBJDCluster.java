@@ -26,25 +26,33 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.List;
 
 /**
- * Copy this file into TeamCode. Preview is the color mask; telemetry is
- * cluster count, ball count, and each cluster's camera X/Y (inches).
+ * Copy this file into TeamCode. Preview is the 12×12 cluster grid (FULL
+ * overlay). Touching yellow cells become one cluster; telemetry is occupied
+ * cells and each cluster's camera X/Y (inches).
  *
- * <p>Gamepad 1: D-pad up widens HSV, D-pad down tightens.</p>
+ * <p>Gamepad 1: D-pad up/down HSV, left/right MASK / GRID / FULL.</p>
  *
  * <p>TeamCode will not resolve {@code org.firstinspires.ftc.easyobjd} until
  * JitPack is a repository and TeamCode depends on the library:</p>
  * <pre>
  * maven { url = 'https://jitpack.io' }
  * implementation 'org.openftc:easyopencv:1.7.3'
- * implementation 'com.github.IamAki123:EasyOBJD:1.0.1'
+ * implementation 'com.github.IamAki123:EasyOBJD:1.0.2'
  * </pre>
  * Then File → Sync Project with Gradle Files.
+ *
+ * <p>Optional: copy {@code EasyOBJDUserConfig} and switch to
+ * {@code EasyOBJD.createPipeline(EasyOBJDUserConfig.create())}.</p>
  */
 //noinspection SpellCheckingInspection
 @SuppressWarnings("unused")
-@TeleOp(name = "EasyOBJD Sample", group = "EasyOBJD")
-public class EasyOBJDSample extends OpMode {
+@TeleOp(name = "EasyOBJD Cluster", group = "EasyOBJD")
+public class EasyOBJDCluster extends OpMode {
     public static final String WEBCAM_NAME = "Webcam 1";
+
+    private static final OverlayMode[] OVERLAYS = {
+            OverlayMode.MASK, OverlayMode.GRID, OverlayMode.FULL
+    };
 
     private OpenCvWebcam webcam;
     private EasyOBJDPipeline pipeline;
@@ -58,7 +66,7 @@ public class EasyOBJDSample extends OpMode {
         webcam = OpenCvCameraFactory.getInstance().createWebcam(
                 hardwareMap.get(WebcamName.class, WEBCAM_NAME), cameraMonitorViewId);
         pipeline = EasyOBJD.createPipeline();
-        pipeline.getConfig().overlayMode = OverlayMode.MASK;
+        pipeline.getConfig().overlayMode = OverlayMode.FULL;
         webcam.setPipeline(pipeline);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -94,11 +102,21 @@ public class EasyOBJDSample extends OpMode {
         if (gamepad1.dpadDownWasPressed()) {
             pipeline.adjustHsvRange(-1);
         }
+        if (gamepad1.dpadRightWasPressed()) {
+            cycleOverlay(1);
+        }
+        if (gamepad1.dpadLeftWasPressed()) {
+            cycleOverlay(-1);
+        }
 
         if (!cameraInitialized) {
             telemetry.addLine("Camera starting...");
         }
-        telemetry.addLine("D-pad UP widen HSV, DOWN tighten");
+        telemetry.addLine("12x12 grid: touching yellow cells = one cluster");
+        telemetry.addLine("D-pad UP/DOWN HSV, LEFT/RIGHT overlay");
+        telemetry.addData("Overlay", pipeline.getConfig().overlayMode);
+        telemetry.addData("Grid", "%d x %d",
+                pipeline.getConfig().gridRows, pipeline.getConfig().gridCols);
         telemetry.addData("HSV lower (H,S,V)", "%.0f, %.0f, %.0f",
                 pipeline.getConfig().hsvLower.val[0],
                 pipeline.getConfig().hsvLower.val[1],
@@ -107,16 +125,30 @@ public class EasyOBJDSample extends OpMode {
                 pipeline.getConfig().hsvUpper.val[0],
                 pipeline.getConfig().hsvUpper.val[1],
                 pipeline.getConfig().hsvUpper.val[2]);
-        telemetry.addData("Clusters detected", pipeline.getClusterCount());
-        telemetry.addData("Balls detected", pipeline.getBallCount());
+        telemetry.addData("Occupied cells", pipeline.getOccupiedCount());
+        telemetry.addData("Clusters", pipeline.getClusterCount());
+        telemetry.addData("Balls", pipeline.getBallCount());
 
         List<ClusterInfo> clusters = pipeline.getClusters();
         for (ClusterInfo cluster : clusters) {
             telemetry.addLine("Cluster #" + cluster.id);
+            telemetry.addData("#" + cluster.id + " cells", cluster.cells.size());
             telemetry.addData("#" + cluster.id + " X", "%.1f in", cluster.x);
             telemetry.addData("#" + cluster.id + " Y", "%.1f in", cluster.y);
         }
         telemetry.update();
+    }
+
+    private void cycleOverlay(int step) {
+        OverlayMode current = pipeline.getConfig().overlayMode;
+        int idx = 0;
+        for (int i = 0; i < OVERLAYS.length; i++) {
+            if (OVERLAYS[i] == current) {
+                idx = i;
+                break;
+            }
+        }
+        pipeline.getConfig().overlayMode = OVERLAYS[Math.floorMod(idx + step, OVERLAYS.length)];
     }
 
     @Override

@@ -2,11 +2,11 @@
 
 [README](../README.md) · [Tuning](Tuning.md) · [API](API.md)
 
-Copy [`EasyOBJDSample.java`](../samples/EasyOBJDSample.java) into TeamCode (`org.firstinspires.ftc.teamcode`). That is the whole first-run path.
+Copy [`EasyOBJDCluster.java`](../samples/EasyOBJDCluster.java) into TeamCode (`org.firstinspires.ftc.teamcode`). That is the whole first-run path.
 
 | File | Required? |
 | --- | --- |
-| [`EasyOBJDSample.java`](../samples/EasyOBJDSample.java) | Yes — create pipeline, D-pad HSV, cluster X/Y |
+| [`EasyOBJDCluster.java`](../samples/EasyOBJDCluster.java) | Yes — 12×12 grid overlay, D-pad HSV, cluster X/Y |
 | [`EasyOBJDUserConfig.java`](../samples/EasyOBJDUserConfig.java) | Optional — saved HSV, ball size, camera inches |
 | [`EasyOBJDTuner.java`](../samples/EasyOBJDTuner.java) | Optional — MASK preview while nudging HSV |
 | [`EasyOBJDCalibrateSample.java`](../samples/EasyOBJDCalibrateSample.java) | Optional — tape focal / tilt |
@@ -43,7 +43,7 @@ for (ClusterInfo cluster : clusters) {
 ## First-run checklist
 
 1. `WEBCAM_NAME` matches Configure Robot.
-2. Run **EasyOBJD Sample**. D-pad up = wider HSV, down = tighter.
+2. Run **EasyOBJD Cluster**. D-pad up = wider HSV, down = tighter. Left/right cycles MASK / GRID / FULL.
 3. Compare telemetry `Y` to a tape measure. Optional Calibrate if inches are off.
 
 Full listings: [`samples/`](../samples/).

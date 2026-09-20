@@ -25,7 +25,7 @@ Java package is `org.firstinspires.ftc.easyobjd`.
 
 | File | Role |
 | --- | --- |
-| `samples/EasyOBJDSample.java` | First-run TeleOp: `createPipeline()`, D-pad HSV, cluster X/Y. |
+| `samples/EasyOBJDCluster.java` | First-run TeleOp: 12×12 grid overlay, D-pad HSV, cluster X/Y. |
 | `samples/EasyOBJDUserConfig.java` | Optional saved HSV, ball size, camera, webcam name. |
 | `samples/EasyOBJDTuner.java` | Optional MASK overlay while nudging HSV. |
 | `samples/EasyOBJDCalibrateSample.java` | Optional tape focal / tilt. |

@@ -10,10 +10,10 @@
    `maven { url = 'https://jitpack.io' }`
 2. In `TeamCode/build.gradle` `dependencies`:
    `implementation 'org.openftc:easyopencv:1.7.3'`
-   `implementation 'com.github.IamAki123:EasyOBJD:1.0.1'`
+   `implementation 'com.github.IamAki123:EasyOBJD:1.0.2'`
 3. File → Sync Project with Gradle Files.
 
-Opening `samples/EasyOBJDSample.java` **inside this library repo** is only for editing. Copy it into TeamCode to run on a robot. First JitPack build of a tag can take a minute.
+Opening `samples/EasyOBJDCluster.java` **inside this library repo** is only for editing. Copy it into TeamCode to run on a robot. First JitPack build of a tag can take a minute.
 
 - `JAVA_HOME` on Java 8: Android Gradle Plugin 8.7 needs JDK 11+. Use Android Studio’s Embedded JDK.
 
@@ -28,7 +28,7 @@ USB: Control Hub port, cable seated. Only one OpMode should own the camera.
 ## Nothing in the mask (all black)
 
 1. Overlay `MASK` or `FULL`.
-2. **EasyOBJD Sample**: D-pad **up** widens, **down** tightens.
+2. **EasyOBJD Cluster**: D-pad **up** widens, **down** tightens. Left/right cycles overlay.
 3. Defaults are **yellow** (`21, 95, 85` … `35, 255, 255`, H 0–179). Other colors: `pipeline.getConfig().hsv(...)` or optional `EasyOBJDUserConfig`.
 4. Red wraps around 0/179: two ranges via `extraColorRange`.
 5. `ADAPTIVE_LIGHTING` helps dim arenas. Glare still punches holes — hood the lens.

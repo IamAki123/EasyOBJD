@@ -4,7 +4,7 @@ These files are **not** inside the JitPack AAR. Copy them into TeamCode (`org.fi
 
 | File | When |
 | --- | --- |
-| [EasyOBJDSample.java](EasyOBJDSample.java) | Always. `createPipeline()`, D-pad HSV, cluster X/Y. |
+| [EasyOBJDCluster.java](EasyOBJDCluster.java) | Always. 12×12 grid overlay, D-pad HSV, cluster X/Y. |
 | [EasyOBJDUserConfig.java](EasyOBJDUserConfig.java) | Optional. Saved HSV, ball size, camera, webcam name. |
 | [EasyOBJDTuner.java](EasyOBJDTuner.java) | Optional. MASK overlay while nudging HSV. |
 | [EasyOBJDCalibrateSample.java](EasyOBJDCalibrateSample.java) | Optional. Tape focal length and tilt. |

@@ -27,7 +27,7 @@ It does **not** replace a Limelight or a custom ML pipeline if you already trust
 
 **Expected accuracy:** measure *your* robot. With a taped lens height/tilt, a real ball diameter, and a clean mask at 2–4 ft, **a couple of inches** of Y error is a common good result — not a guarantee. Lighting, glare, and wide-angle distortion dominate. Error that *grows toward the image edge* is usually an undistorted lens, not a missing filter. How to score tape vs vision: [Tuning](docs/Tuning.md).
 
-**Current release:** 1.0.1. JitPack: `com.github.IamAki123:EasyOBJD:1.0.1`. Copy [`EasyOBJDSample`](samples/EasyOBJDSample.java), run it, D-pad HSV. Optional UserConfig / Calibrate if you want saved inches.
+**Current release:** 1.0.2. JitPack: `com.github.IamAki123:EasyOBJD:1.0.2`. Copy [`EasyOBJDCluster`](samples/EasyOBJDCluster.java), run it, D-pad HSV. Optional UserConfig / Calibrate if you want saved inches.
 
 ## First time here?
 
@@ -36,8 +36,8 @@ Do these in order. Each step has a longer page if you get stuck.
 | Step | What you do | Details |
 | --- | --- | --- |
 | 1 | Add the JitPack dependency and EasyOpenCV, sync Gradle | [Install](docs/Install.md) |
-| 2 | Copy [`EasyOBJDSample`](samples/EasyOBJDSample.java) into TeamCode. Set `WEBCAM_NAME` to match Configure Robot | [Sample OpMode](docs/SampleOpMode.md) |
-| 3 | Run **EasyOBJD Sample**. D-pad **up** widens HSV, **down** tightens. Telemetry is cluster X/Y in inches | Same loop as the first release |
+| 2 | Copy [`EasyOBJDCluster`](samples/EasyOBJDCluster.java) into TeamCode. Set `WEBCAM_NAME` to match Configure Robot | [Sample OpMode](docs/SampleOpMode.md) |
+| 3 | Run **EasyOBJD Cluster**. D-pad **up** widens HSV, **down** tightens. Preview is the 12×12 grid | Same loop as the first release |
 | 4 | Optional: copy [`EasyOBJDUserConfig`](samples/EasyOBJDUserConfig.java) and pass `EasyOBJDUserConfig.create()` to keep HSV / camera inches | [Tuning](docs/Tuning.md) |
 | 5 | Optional: **EasyOBJD Calibrate** for tape focal length and tilt | [Tuning](docs/Tuning.md#2-inches--easyobjd-calibrate) |
 
@@ -45,7 +45,7 @@ Do these in order. Each step has a longer page if you get stuck.
 EasyOBJD.createPipeline()
         │
         ▼
-EasyOBJD Sample  —  D-pad HSV, getClusters() X/Y
+EasyOBJD Cluster  —  12×12 grid, D-pad HSV, getClusters() X/Y
         │
         ▼
 optional UserConfig / Calibrate  —  saved HSV and camera inches
@@ -69,7 +69,7 @@ Then in `TeamCode/build.gradle`, inside `dependencies`:
 
 ```gradle
 implementation 'org.openftc:easyopencv:1.7.3'
-implementation 'com.github.IamAki123:EasyOBJD:1.0.1'
+implementation 'com.github.IamAki123:EasyOBJD:1.0.2'
 ```
 
 **Sync:** File → Sync Project with Gradle Files. Use Android Studio’s Embedded JDK for the Gradle JVM.
@@ -78,7 +78,7 @@ Sync errors: [Install](docs/Install.md).
 
 ## 2. Copy the sample
 
-Copy [`samples/EasyOBJDSample.java`](samples/EasyOBJDSample.java) into TeamCode. Set `WEBCAM_NAME` to the name in Configure Robot (`Webcam 1` by default).
+Copy [`samples/EasyOBJDCluster.java`](samples/EasyOBJDCluster.java) into TeamCode. Set `WEBCAM_NAME` to the name in Configure Robot (`Webcam 1` by default).
 
 ```java
 EasyOBJDPipeline pipeline = EasyOBJD.createPipeline();
@@ -123,7 +123,7 @@ Optional field frame: `pipeline.setRobotPose(...)`. Full listing: [Sample OpMode
 
 ## 4. Tune (practice, not matches)
 
-1. Run **EasyOBJD Sample**. D-pad **up** = wider HSV, **down** = tighter.
+1. Run **EasyOBJD Cluster**. D-pad **up** = wider HSV, **down** = tighter.
 2. Optional: paste those HSV numbers into `EasyOBJDUserConfig` and pass `UserConfig.create()` so TeleOp/auto keep them.
 3. Optional: **EasyOBJD Calibrate** for focal length and tilt.
 

@@ -2,7 +2,7 @@
 
 [README](../README.md) · [Sample OpMode](SampleOpMode.md) · [Troubleshooting](Troubleshooting.md)
 
-Current JitPack version: **1.0.1** (must match a [git tag](https://github.com/IamAki123/EasyOBJD/releases)).
+Current JitPack version: **1.0.2** (must match a [git tag](https://github.com/IamAki123/EasyOBJD/releases)).
 
 ## What you need
 
@@ -42,7 +42,7 @@ In `TeamCode/build.gradle`:
 dependencies {
     implementation project(':FtcRobotController')
     implementation 'org.openftc:easyopencv:1.7.3'
-    implementation 'com.github.IamAki123:EasyOBJD:1.0.1'
+    implementation 'com.github.IamAki123:EasyOBJD:1.0.2'
 }
 ```
 
@@ -54,7 +54,7 @@ File → Sync Project with Gradle Files.
 
 **You are done when** the project syncs and Android Studio can autocomplete `org.firstinspires.ftc.easyobjd.EasyOBJD`.
 
-Next: copy [`EasyOBJDSample`](../samples/EasyOBJDSample.java) and continue in the [README](../README.md) (**2. Copy the sample**).
+Next: copy [`EasyOBJDCluster`](../samples/EasyOBJDCluster.java) and continue in the [README](../README.md) (**2. Copy the sample**).
 
 ## Optional: local module
 

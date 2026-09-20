@@ -9,6 +9,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import org.firstinspires.ftc.easyobjd.EasyOBJDConfig;
+import org.firstinspires.ftc.easyobjd.OverlayMode;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 /**
@@ -66,6 +67,12 @@ public final class EasyOBJDUserConfig {
     public static double MAX_RANGE_INCHES = 60.0;
     public static boolean ADAPTIVE_LIGHTING = true;
 
+    /** Occupied yellow cells that touch become one cluster. */
+    public static int GRID_ROWS = 12;
+    public static int GRID_COLS = 12;
+    /** FULL draws the 12×12 regions, balls, and cluster markers. */
+    public static OverlayMode OVERLAY = OverlayMode.FULL;
+
     /** Builds the library config from the fields above. */
     public static EasyOBJDConfig create() {
         return EasyOBJDConfig.builder()
@@ -77,6 +84,8 @@ public final class EasyOBJDUserConfig {
                 .maxRangeInches(MAX_RANGE_INCHES)
                 .processWidth(PROCESS_WIDTH)
                 .adaptiveLighting(ADAPTIVE_LIGHTING)
+                .grid(GRID_ROWS, GRID_COLS)
+                .overlayMode(OVERLAY)
                 .build();
     }
 }
