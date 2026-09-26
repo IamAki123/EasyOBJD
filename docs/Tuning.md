@@ -2,7 +2,7 @@
 
 [README](../README.md) · [Troubleshooting](Troubleshooting.md)
 
-$${\color{red}\LARGE\textbf{CONFIGURE YOUR ROBOT OR THE DISTANCES WILL BE WRONG}}$$
+<p align="center"><img src="images/configure-your-robot.svg" alt="CONFIGURE YOUR ROBOT OR THE DISTANCES WILL BE WRONG" width="100%"></p>
 
 > [!CAUTION]
 > **EasyOBJD can't guess where your camera is.** Until you do section 1 on *your* robot, distances can be off by a foot or more. Being just 1° off on camera tilt moves a ball 4 ft away by about 2 in.

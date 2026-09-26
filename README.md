@@ -7,7 +7,7 @@
 [![Tests](https://github.com/IamAki123/EasyOBJD/actions/workflows/tests.yml/badge.svg)](https://github.com/IamAki123/EasyOBJD/actions/workflows/tests.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-$${\color{red}\LARGE\textbf{CONFIGURE YOUR ROBOT OR THE DISTANCES WILL BE WRONG}}$$
+<p align="center"><img src="docs/images/configure-your-robot.svg" alt="CONFIGURE YOUR ROBOT OR THE DISTANCES WILL BE WRONG" width="100%"></p>
 
 > [!CAUTION]
 > **Do step 3 below before you trust any inches.** The camera numbers that ship with the samples are from another team's robot. It takes about 5 minutes with a tape measure.

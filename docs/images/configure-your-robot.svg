@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="80" viewBox="0 0 1000 80" role="img" aria-label="CONFIGURE YOUR ROBOT OR THE DISTANCES WILL BE WRONG">
+  <rect x="2" y="2" width="996" height="76" rx="10" fill="#fff0f0" stroke="#d1242f" stroke-width="4"/>
+  <text x="500" y="51" text-anchor="middle" textLength="930" lengthAdjust="spacingAndGlyphs"
+        font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="32" font-weight="800" fill="#d1242f">CONFIGURE YOUR ROBOT OR THE DISTANCES WILL BE WRONG</text>
+</svg>
