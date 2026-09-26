@@ -2,12 +2,16 @@
 
 [README](../README.md) · [Tuning](Tuning.md) · [API](API.md)
 
-Copy [`EasyOBJDCluster.java`](../samples/EasyOBJDCluster.java) into TeamCode (`org.firstinspires.ftc.teamcode`). That is the whole first-run path.
+Copy these into TeamCode (`org.firstinspires.ftc.teamcode`):
+
+> [!CAUTION]
+> **Configure your robot with EasyOBJD Range Test or the distances will be wrong.** [How](Tuning.md#1-configure-your-robot-about-5-minutes-required)
 
 | File | Required? |
 | --- | --- |
 | [`EasyOBJDCluster.java`](../samples/EasyOBJDCluster.java) | Yes — 12×12 grid overlay, D-pad HSV, cluster X/Y |
-| [`EasyOBJDUserConfig.java`](../samples/EasyOBJDUserConfig.java) | Optional — saved HSV, ball size, camera inches |
+| [`EasyOBJDUserConfig.java`](../samples/EasyOBJDUserConfig.java) | Yes — your camera height, tilt, focal, HSV, ball size |
+| [`EasyOBJDRangeTest.java`](../samples/EasyOBJDRangeTest.java) | Yes, once per robot — solves tilt and focal from a tape measure |
 | [`EasyOBJDTuner.java`](../samples/EasyOBJDTuner.java) | Optional — MASK preview while nudging HSV |
 | [`EasyOBJDCalibrateSample.java`](../samples/EasyOBJDCalibrateSample.java) | Optional — tape focal / tilt |
 
@@ -43,7 +47,8 @@ for (ClusterInfo cluster : clusters) {
 ## First-run checklist
 
 1. `WEBCAM_NAME` matches Configure Robot.
-2. Run **EasyOBJD Cluster**. D-pad up = wider HSV, down = tighter. Left/right cycles MASK / GRID / FULL.
-3. Compare telemetry `Y` to a tape measure. Optional Calibrate if inches are off.
+2. Tape camera height and lens-to-front into `EasyOBJDUserConfig`, then run **EasyOBJD Range Test** and paste the tilt / focal it solves.
+3. Run **EasyOBJD Cluster**. D-pad up = wider HSV, down = tighter. Left/right cycles MASK / GRID / FULL.
+4. Compare telemetry `from robot front` to a tape measure.
 
 Full listings: [`samples/`](../samples/).

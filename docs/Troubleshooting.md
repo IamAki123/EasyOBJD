@@ -10,7 +10,7 @@
    `maven { url = 'https://jitpack.io' }`
 2. In `TeamCode/build.gradle` `dependencies`:
    `implementation 'org.openftc:easyopencv:1.7.3'`
-   `implementation 'com.github.IamAki123:EasyOBJD:1.0.2'`
+   `implementation 'com.github.IamAki123:EasyOBJD:1.0.3'`
 3. File → Sync Project with Gradle Files.
 
 Opening `samples/EasyOBJDCluster.java` **inside this library repo** is only for editing. Copy it into TeamCode to run on a robot. First JitPack build of a tag can take a minute.
@@ -39,8 +39,8 @@ Tighten HSV (D-pad **down**). Raise `whiteRatioThreshold` on the library config 
 
 ## X/Y look wrong
 
-1. Tape **lens** height and tilt (inclinometer). A **level** camera cannot floor-localize a ball on the optical axis.
-2. **EasyOBJD Calibrate**: one on-axis ball at a known distance → `FOCAL_LENGTH_PIXELS_AT_640` and `CAMERA_TILT_DEGREES`.
+1. **Configure your robot.** Tape lens height and lens-to-front into `EasyOBJDUserConfig`, then run **EasyOBJD Range Test** at two distances and paste its tilt / focal. [Steps](Tuning.md#1-configure-your-robot-about-5-minutes-required). This fixes almost every "Y is too far / too short" report.
+2. In Range Test, set **Target** to the tape *before* pressing A. Target is robot front → near edge of the ball.
 3. `BALL_DIAMETER_INCHES` must be the real piece.
 4. No undistortion — distrust the image edges.
 5. `ClusterInfo.x` is **right**, `.y` is **forward**, from the **lens**.

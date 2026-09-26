@@ -11,7 +11,7 @@ Java package is `org.firstinspires.ftc.easyobjd`.
 | `EasyOBJD.java` | Factory plus nested `LocalizationMethod` and `IntakeHeuristic`. |
 | `OverlayMode.java` | Preview: `FULL`, `MASK`, `GRID`, `BALLS`, `DISTANCES`. |
 | `EasyOBJDPipeline.java` | EasyOpenCV pipeline: mask, grid, balls, localize, overlay, snapshots. |
-| `EasyOBJDConfig.java` | Library tunables. Optional TeamCode `EasyOBJDUserConfig` fills these; you can also use `createPipeline()` defaults. |
+| `EasyOBJDConfig.java` | Library tunables. TeamCode `EasyOBJDUserConfig` fills these with your robot's measured camera mount. |
 | `EasyOBJDCalibration.java` | Tape helpers: focal length and suggested tilt. |
 | `ClusterInfo.java` | Immutable published detections, including nested `ClusterInfo.Ball`. |
 
@@ -26,7 +26,8 @@ Java package is `org.firstinspires.ftc.easyobjd`.
 | File | Role |
 | --- | --- |
 | `samples/EasyOBJDCluster.java` | First-run TeleOp: 12×12 grid overlay, D-pad HSV, cluster X/Y. |
-| `samples/EasyOBJDUserConfig.java` | Optional saved HSV, ball size, camera, webcam name. |
+| `samples/EasyOBJDUserConfig.java` | Your camera height, lens-to-front, tilt, focal, HSV, ball size, webcam name. |
+| `samples/EasyOBJDRangeTest.java` | Configure your robot: tape two distances, solves tilt and focal. |
 | `samples/EasyOBJDTuner.java` | Optional MASK overlay while nudging HSV. |
 | `samples/EasyOBJDCalibrateSample.java` | Optional tape focal / tilt. |
 

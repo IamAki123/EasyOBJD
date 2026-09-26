@@ -2,7 +2,7 @@
 
 [README](../README.md) · [Sample OpMode](SampleOpMode.md) · [Troubleshooting](Troubleshooting.md)
 
-Current JitPack version: **1.0.2** (must match a [git tag](https://github.com/IamAki123/EasyOBJD/releases)).
+Current JitPack version: **1.0.3** (must match a [git tag](https://github.com/IamAki123/EasyOBJD/releases)).
 
 ## What you need
 
@@ -42,7 +42,7 @@ In `TeamCode/build.gradle`:
 dependencies {
     implementation project(':FtcRobotController')
     implementation 'org.openftc:easyopencv:1.7.3'
-    implementation 'com.github.IamAki123:EasyOBJD:1.0.2'
+    implementation 'com.github.IamAki123:EasyOBJD:1.0.3'
 }
 ```
 

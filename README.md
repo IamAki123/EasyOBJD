@@ -1,154 +1,101 @@
 # EasyOBJD
 
-FTC object detection, simplified.
+**FTC object detection, simplified.** Point a webcam at game pieces, get how far away they are in inches.
 
 [![Release](https://img.shields.io/github/v/tag/IamAki123/EasyOBJD?label=release)](https://github.com/IamAki123/EasyOBJD/tags)
 [![JitPack](https://jitpack.io/v/IamAki123/EasyOBJD.svg)](https://jitpack.io/#IamAki123/EasyOBJD)
 [![Tests](https://github.com/IamAki123/EasyOBJD/actions/workflows/tests.yml/badge.svg)](https://github.com/IamAki123/EasyOBJD/actions/workflows/tests.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-## About EasyOBJD
+$${\color{red}\LARGE\textbf{CONFIGURE YOUR ROBOT OR THE DISTANCES WILL BE WRONG}}$$
 
-EasyOBJD turns an EasyOpenCV webcam frame into filtered, camera-relative game-piece positions (X, Y in inches). Copy the sample, D-pad HSV on the Driver Station, read cluster X/Y. Optional UserConfig if you want those numbers saved.
+> [!CAUTION]
+> **Do step 3 below before you trust any inches.** The camera numbers that ship with the samples are from another team's robot. It takes about 5 minutes with a tape measure.
 
-It does **not** replace odometry. Camera X/Y do not need a pose. Field X/Y update only after you call `setRobotPose`.
+## What you get
 
-### Why EasyOBJD instead of a raw HSV OpMode?
+- **Finds every game piece** of one color, and groups touching pieces into clusters.
+- **Tells you where each one is**: inches ahead of your robot and inches left/right.
+- **Tunes on the Driver Station**: widen or tighten the color filter with the D-pad, no rebuilding.
 
-EasyOpenCV already gives you a `Mat`. EasyOBJD adds the pieces teams usually rewrite:
+## Quick start
 
-- HSV mask with live widen/tighten (not hardcoded to one season)
-- 12×12 grid clustering so touching pieces are one group
-- Circularity + arc-split so peanut blobs become individual balls
-- Floor-plane inches from camera height + tilt, with size-based fallback
-- Immutable snapshots, intake pick, debug overlay
+### 1. Install
 
-It does **not** replace a Limelight or a custom ML pipeline if you already trust those. Use EasyOBJD when you want “where is that yellow (or other-color) circle?” in inches on a Control Hub webcam.
-
-**Expected accuracy:** measure *your* robot. With a taped lens height/tilt, a real ball diameter, and a clean mask at 2–4 ft, **a couple of inches** of Y error is a common good result — not a guarantee. Lighting, glare, and wide-angle distortion dominate. Error that *grows toward the image edge* is usually an undistorted lens, not a missing filter. How to score tape vs vision: [Tuning](docs/Tuning.md).
-
-**Current release:** 1.0.2. JitPack: `com.github.IamAki123:EasyOBJD:1.0.2`. Copy [`EasyOBJDCluster`](samples/EasyOBJDCluster.java), run it, D-pad HSV. Optional UserConfig / Calibrate if you want saved inches.
-
-## First time here?
-
-Do these in order. Each step has a longer page if you get stuck.
-
-| Step | What you do | Details |
-| --- | --- | --- |
-| 1 | Add the JitPack dependency and EasyOpenCV, sync Gradle | [Install](docs/Install.md) |
-| 2 | Copy [`EasyOBJDCluster`](samples/EasyOBJDCluster.java) into TeamCode. Set `WEBCAM_NAME` to match Configure Robot | [Sample OpMode](docs/SampleOpMode.md) |
-| 3 | Run **EasyOBJD Cluster**. D-pad **up** widens HSV, **down** tightens. Preview is the 12×12 grid | Same loop as the first release |
-| 4 | Optional: copy [`EasyOBJDUserConfig`](samples/EasyOBJDUserConfig.java) and pass `EasyOBJDUserConfig.create()` to keep HSV / camera inches | [Tuning](docs/Tuning.md) |
-| 5 | Optional: **EasyOBJD Calibrate** for tape focal length and tilt | [Tuning](docs/Tuning.md#2-inches--easyobjd-calibrate) |
-
-```
-EasyOBJD.createPipeline()
-        │
-        ▼
-EasyOBJD Cluster  —  12×12 grid, D-pad HSV, getClusters() X/Y
-        │
-        ▼
-optional UserConfig / Calibrate  —  saved HSV and camera inches
-```
-
-Samples are **not** in the JitPack AAR.
-
-## 1. Install
-
-In a stock FTC SDK project, add JitPack next to `mavenCentral()` and `google()` in the **root** `build.dependencies.gradle`:
+In the **root** `build.dependencies.gradle`, add JitPack to `repositories`:
 
 ```gradle
-repositories {
-    mavenCentral()
-    google()
-    maven { url = 'https://jitpack.io' }
-}
+maven { url = 'https://jitpack.io' }
 ```
 
-Then in `TeamCode/build.gradle`, inside `dependencies`:
+In `TeamCode/build.gradle`, add to `dependencies`:
 
 ```gradle
 implementation 'org.openftc:easyopencv:1.7.3'
-implementation 'com.github.IamAki123:EasyOBJD:1.0.2'
+implementation 'com.github.IamAki123:EasyOBJD:1.0.3'
 ```
 
-**Sync:** File → Sync Project with Gradle Files. Use Android Studio’s Embedded JDK for the Gradle JVM.
+Then **File → Sync Project with Gradle Files**. Stuck? See [Install](docs/Install.md).
 
-Sync errors: [Install](docs/Install.md).
+### 2. Copy 3 files into TeamCode
 
-## 2. Copy the sample
+| File | What it is |
+| --- | --- |
+| [`EasyOBJDUserConfig.java`](samples/EasyOBJDUserConfig.java) | Your robot's settings. The only file you edit. |
+| [`EasyOBJDRangeTest.java`](samples/EasyOBJDRangeTest.java) | Measures your camera setup. Run once per robot. |
+| [`EasyOBJDCluster.java`](samples/EasyOBJDCluster.java) | Shows every cluster and how far away it is. |
 
-Copy [`samples/EasyOBJDCluster.java`](samples/EasyOBJDCluster.java) into TeamCode. Set `WEBCAM_NAME` to the name in Configure Robot (`Webcam 1` by default).
+Set `WEBCAM_NAME` in `EasyOBJDUserConfig` to your webcam's name in **Configure Robot** (usually `Webcam 1`).
+
+### 3. Configure your robot (5 minutes)
+
+1. Tape **floor → center of the lens**. Put it in `CAMERA_HEIGHT_INCHES`.
+2. Tape **lens → front of the robot**. Put it in `CAMERA_BEHIND_FRONT_INCHES`.
+3. Run **EasyOBJD Range Test**. Put a ball ~2 ft ahead, set **Target** to your tape, press **A**.
+4. Move the ball ~2 ft farther, set **Target**, press **A** again.
+5. Copy the two numbers it shows into `EasyOBJDUserConfig`.
+
+Full walkthrough and common mistakes: [Configure your robot](docs/Tuning.md#1-configure-your-robot-about-5-minutes-required).
+
+### 4. Run it
+
+Run **EasyOBJD Cluster**. Each cluster shows as:
+
+```
+#1   29.0 in ahead   2.1 in right
+```
+
+Put a tape measure down and check it. If there are no clusters, press **D-pad up** to widen the color filter.
+
+## Use it in your own OpMode
 
 ```java
-EasyOBJDPipeline pipeline = EasyOBJD.createPipeline();
-webcam.setPipeline(pipeline);
-```
-
-D-pad **up** / **down** widens / tightens HSV in that same OpMode.
-
-To keep HSV and camera inches after you leave the OpMode, copy [`EasyOBJDUserConfig`](samples/EasyOBJDUserConfig.java) and switch to `EasyOBJD.createPipeline(EasyOBJDUserConfig.create())`. You do not edit the library.
-
-### Coordinates (read once)
-
-| Quantity | Units / convention |
-| --- | --- |
-| Cluster X / Y | Inches right / forward of the **lens** |
-| Robot X / Y | Inches right / forward of robot center (offsets + yaw) |
-| Field X / Y | After `setRobotPose` (inches, heading radians) |
-| HSV hue | OpenCV 8-bit **0–179** |
-| Camera tilt | Degrees, **positive = down** |
-| Ball diameter | Inches |
-
-## 3. Use it in an OpMode
-
-```java
-pipeline = EasyOBJD.createPipeline();
+EasyOBJDPipeline pipeline = EasyOBJD.createPipeline(EasyOBJDUserConfig.create());
 webcam.setPipeline(pipeline);
 
-if (gamepad1.dpadUpWasPressed()) {
-    pipeline.adjustHsvRange(1);
-}
-if (gamepad1.dpadDownWasPressed()) {
-    pipeline.adjustHsvRange(-1);
-}
-
-List<ClusterInfo> clusters = pipeline.getClusters();
-for (ClusterInfo cluster : clusters) {
-    // cluster.x / cluster.y — inches right / forward of the lens
+for (ClusterInfo cluster : pipeline.getClusters()) {
+    double ahead = cluster.y;   // inches forward of the lens
+    double right = cluster.x;   // inches right of the lens (negative = left)
 }
 ```
 
-Optional field frame: `pipeline.setRobotPose(...)`. Full listing: [Sample OpMode](docs/SampleOpMode.md). Builder: [API](docs/API.md).
+Subtract `CAMERA_BEHIND_FRONT_INCHES` from `cluster.y` to get distance from the robot front. Every method: [API](docs/API.md).
 
-## 4. Tune (practice, not matches)
+## Need help?
 
-1. Run **EasyOBJD Cluster**. D-pad **up** = wider HSV, **down** = tighter.
-2. Optional: paste those HSV numbers into `EasyOBJDUserConfig` and pass `UserConfig.create()` so TeleOp/auto keep them.
-3. Optional: **EasyOBJD Calibrate** for focal length and tilt.
-
-Tape the **lens** first. [Tuning](docs/Tuning.md).
-
-## Docs
-
-| Page | When to open it |
+| I want to… | Read |
 | --- | --- |
-| [Docs index](docs/DocsInfo.md) | List of all guide pages |
-| [Prerequisites](docs/Prerequisites.md) | Webcam, what EasyOBJD does not do |
-| [Install](docs/Install.md) | Gradle, JitPack, local module, JDK |
-| [Sample OpMode](docs/SampleOpMode.md) | Files to copy |
-| [Tuning](docs/Tuning.md) | Tuner vs Calibrate, field procedure |
-| [Math (simple)](docs/MathButDumbed.md) | How it works, no formulas |
-| [Math](docs/Math.md) | Pinhole, tilt, floor-plane |
-| [What each file does](docs/LibraryFiles.md) | Pipeline, config, math, samples |
-| [API](docs/API.md) | Method-by-method reference |
-| [Troubleshooting](docs/Troubleshooting.md) | Blank mask, wrong inches, NaN field |
-| [Changelog](CHANGELOG.md) | What changed between releases |
-| [Contributing](CONTRIBUTING.md) | Building this repo from source |
+| Fix wrong distances, a blank mask, or a crash | [Troubleshooting](docs/Troubleshooting.md) |
+| Tune the color filter or re-measure the camera | [Tuning](docs/Tuning.md) |
+| See how it works, no math | [Simple explanation](docs/MathButDumbed.md) |
+| Look up a method | [API](docs/API.md) |
+| See everything | [All docs](docs/DocsInfo.md) · [Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md) |
+
+**Good to know:** samples are not inside the JitPack library, so you always copy them. EasyOBJD gives camera-relative positions; it does not replace odometry. Accuracy is usually within a couple of inches at 2–4 ft once your robot is configured.
 
 ## Credits
 
 Akash Vijay Aradhya — #23918 Super Sigma Robotics
-Aditi Rao - #23918 Super Sigma Robotics
+Aditi Rao — #23918 Super Sigma Robotics
 
 AI tools (Cursor, ChatGPT, OpenAI Codex in Cursor) were used as development assistants for code generation, debugging, documentation, and refinement. Architecture, requirements, testing, validation, and final implementation decisions were directed and reviewed by the author.

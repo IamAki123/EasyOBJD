@@ -2,6 +2,23 @@
 
 ## Unreleased
 
+## 1.0.3
+
+Distances are now accurate once you configure your robot. Run **EasyOBJD Range Test** after upgrading.
+
+### Added
+- `EasyOBJDCalibration.tiltForFloorPoint` solves camera tilt from where a taped ball actually appears in the image, and `focalForTwoFloorPoints` solves focal length (FOV) from two taped distances.
+- [`EasyOBJDRangeTest`](samples/EasyOBJDRangeTest.java) TeleOp: tape from the robot front to the ball, press A at two distances, and it solves tilt / focal. Readouts are distance from the robot front.
+- `EasyOBJDUserConfig.CAMERA_BEHIND_FRONT_INCHES` (lens to front of robot).
+- "Configure your robot" guide in [Tuning](docs/Tuning.md) with a required-setup warning in the README.
+
+### Changed
+- `EasyOBJDCluster` reads camera height, tilt, focal, and ball diameter from `EasyOBJDUserConfig` and shows each cluster's distance from the robot front. Copy both files.
+- Sample mount defaults are now a measured robot (18 in, 15.58°, focal 710.4 at 640) instead of 19 in / 25° / FOV-derived focal. Teams must still run Range Test on their own robot.
+
+### Fixed
+- Calibrate sample no longer assumes the ball sits at image center when suggesting `CAMERA_TILT_DEGREES`. That assumption put tilt several degrees off, which reads balls short at range (about 36 in for a 45 in ball at 19 in height).
+
 ## 1.0.2
 
 ### Changed

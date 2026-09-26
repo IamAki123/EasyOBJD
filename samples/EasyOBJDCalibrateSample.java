@@ -17,6 +17,7 @@ import org.firstinspires.ftc.easyobjd.ClusterInfo.Ball;
 import org.firstinspires.ftc.easyobjd.EasyOBJD;
 import org.firstinspires.ftc.easyobjd.EasyOBJDCalibration;
 import org.firstinspires.ftc.easyobjd.EasyOBJDPipeline;
+import org.firstinspires.ftc.easyobjd.LocalizationMath;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -105,12 +106,17 @@ public class EasyOBJDCalibrateSample extends OpMode {
             double focal = EasyOBJDCalibration.focalLengthAt640(
                     largest.radiusPx, KNOWN_DISTANCE_INCHES, processWidth,
                     EasyOBJDUserConfig.BALL_DIAMETER_INCHES);
-            double tilt = EasyOBJDCalibration.suggestedTiltDegrees(
+            int processHeight = (int) Math.round(EasyOBJDUserConfig.STREAM_HEIGHT
+                    * processWidth / (double) EasyOBJDUserConfig.STREAM_WIDTH);
+            double focalPx = LocalizationMath.focalPx(pipeline.getConfig().focalLengthPixelsAt640,
+                    pipeline.getConfig().horizontalFovDegrees, processWidth);
+            double tilt = EasyOBJDCalibration.tiltForFloorPoint(
+                    largest.center.y, processHeight, focalPx,
                     EasyOBJDUserConfig.CAMERA_HEIGHT_INCHES, KNOWN_DISTANCE_INCHES,
                     EasyOBJDUserConfig.BALL_DIAMETER_INCHES);
             telemetry.addData("Apparent radius", "%.1f px", largest.radiusPx);
             telemetry.addData("FOCAL_LENGTH_PIXELS_AT_640", "%.1f", focal);
-            telemetry.addData("CAMERA_TILT_DEGREES (if on-axis)", "%.1f", tilt);
+            telemetry.addData("CAMERA_TILT_DEGREES", "%.2f", tilt);
         }
 
         pipeline.addTelemetry(telemetry, true);

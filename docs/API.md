@@ -2,7 +2,7 @@
 
 [README](../README.md) · [Library files](LibraryFiles.md) · [Sample OpMode](SampleOpMode.md)
 
-Package: `org.firstinspires.ftc.easyobjd`. Current JitPack: **1.0.2**.
+Package: `org.firstinspires.ftc.easyobjd`. Current JitPack: **1.0.3**.
 
 ## EasyOBJD
 
@@ -74,5 +74,12 @@ focalLengthAt640(radiusPx, distanceIn, frameWidth, ballDiameterIn)
 suggestedTiltDegrees(cameraHeightIn, floorDistanceIn)
 suggestedTiltDegrees(cameraHeightIn, floorDistanceIn, ballDiameterIn)
 horizontalFovDegrees(focalAt640)
+
+// What Range Test uses: works anywhere in the image, not just at center
+tiltForFloorPoint(pixelY, frameHeight, focalPx, cameraHeightIn, forwardIn, ballDiameterIn)
+focalForTwoFloorPoints(pixelY1, forward1, pixelY2, forward2, frameWidth, frameHeight,
+                       cameraHeightIn, ballDiameterIn)   // NaN if the points are too close
 ```
+
+`suggestedTiltDegrees` assumes the ball is at the exact image center. Prefer `tiltForFloorPoint`, or just run **EasyOBJD Range Test**.
 

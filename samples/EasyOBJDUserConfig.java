@@ -57,12 +57,17 @@ public final class EasyOBJDUserConfig {
     public static double S_HIGH = 255;
     public static double V_HIGH = 255;
 
-    // ---- Camera mount (tape + inclinometer, or EasyOBJD Calibrate) ----
-    public static double CAMERA_HEIGHT_INCHES = 19.0;
-    public static double CAMERA_TILT_DEGREES = 25.0;
+    // ---- Camera mount: run EasyOBJD Range Test and paste its numbers here. ----
+    // These came from one team's robot (#23918). Yours WILL be different, and
+    // distances are wrong until you replace them.
+    /** Floor to the center of the lens. */
+    public static double CAMERA_HEIGHT_INCHES = 18.0;
+    /** How far the lens sits behind the front of the robot. */
+    public static double CAMERA_BEHIND_FRONT_INCHES = 6.5;
+    public static double CAMERA_TILT_DEGREES = 15.58;
     public static double HORIZONTAL_FOV_DEGREES = 70.4;
-    /** 0 = derive from FOV. Set after tape calibration. */
-    public static double FOCAL_LENGTH_PIXELS_AT_640 = 0;
+    /** 0 = derive from FOV. Range Test solves this from two taped distances. */
+    public static double FOCAL_LENGTH_PIXELS_AT_640 = 710.4;
 
     public static double MAX_RANGE_INCHES = 60.0;
     public static boolean ADAPTIVE_LIGHTING = true;

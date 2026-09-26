@@ -21,10 +21,11 @@ package org.firstinspires.ftc.easyobjd;
  * config.cameraTiltDegrees = EasyOBJDCalibration.suggestedTiltDegrees(cameraHeightIn, distanceIn);
  * </pre>
  *
- * <p>Suggested tilt assumes the ball sits on the optical axis (image center).
- * Prefer a phone inclinometer on the camera housing when the ball is not
- * centered vertically. Checkerboard / AprilTag extrinsics can replace these
- * later; this helper stays tape-only.
+ * <p>{@link #suggestedTiltDegrees} assumes the ball sits on the optical axis
+ * (image center). {@link #tiltForFloorPoint} uses the ball's actual image row
+ * and is the one to trust; {@link #focalForTwoFloorPoints} also fixes a wrong
+ * FOV from two taped distances. Checkerboard / AprilTag extrinsics can replace
+ * these later; these helpers stay tape-only.
  */
 public class EasyOBJDCalibration {
     public static final double DEFAULT_BALL_DIAMETER_INCHES = 2.8;
@@ -64,6 +65,68 @@ public class EasyOBJDCalibration {
         }
         double drop = cameraHeightInches - ballDiameterInches / 2.0;
         return Math.toDegrees(Math.atan(drop / floorDistanceInches));
+    }
+
+    /**
+     * Downward pitch that makes a floor ball seen at image row {@code pixelY}
+     * read {@code forwardInches} with floor-plane localization. Unlike
+     * {@link #suggestedTiltDegrees}, the ball does not need to be on the
+     * optical axis.
+     *
+     * @param focalPx focal length at the frame the pixel came from (see
+     *                {@link LocalizationMath#focalPx})
+     */
+    public static double tiltForFloorPoint(double pixelY, int frameHeight, double focalPx,
+                                           double cameraHeightInches, double forwardInches,
+                                           double ballDiameterInches) {
+        if (frameHeight <= 0 || focalPx <= 1e-6 || forwardInches <= 1e-6) {
+            return Double.NaN;
+        }
+        double drop = cameraHeightInches - ballDiameterInches / 2.0;
+        double aboveAxis = Math.atan2(frameHeight / 2.0 - pixelY, focalPx);
+        return Math.toDegrees(aboveAxis + Math.atan2(drop, forwardInches));
+    }
+
+    /**
+     * Focal length at 640-wide from two floor balls at different taped
+     * forward distances. Pair with {@link #tiltForFloorPoint} to fix both
+     * tilt and FOV. Returns NaN when the points are too close together in
+     * the image to separate focal length from tilt.
+     */
+    public static double focalForTwoFloorPoints(double pixelY1, double forwardInches1,
+                                                double pixelY2, double forwardInches2,
+                                                int frameWidth, int frameHeight,
+                                                double cameraHeightInches, double ballDiameterInches) {
+        if (frameWidth <= 0 || frameHeight <= 0 || forwardInches1 <= 1e-6 || forwardInches2 <= 1e-6) {
+            return Double.NaN;
+        }
+        double a1 = frameHeight / 2.0 - pixelY1;
+        double a2 = frameHeight / 2.0 - pixelY2;
+        if (Math.abs(a1 - a2) < 0.05 * frameHeight) {
+            return Double.NaN;
+        }
+        double drop = cameraHeightInches - ballDiameterInches / 2.0;
+        double target = Math.atan2(drop, forwardInches2) - Math.atan2(drop, forwardInches1);
+        // atan(a1/f) - atan(a2/f) peaks at f = sqrt(a1*a2) when both share a sign;
+        // start above the peak so the search interval has a single root.
+        double lo = Math.max(0.3 * frameWidth, Math.sqrt(Math.max(0, a1 * a2)) + 1.0);
+        double hi = 5.0 * frameWidth;
+        double gLo = Math.atan2(a1, lo) - Math.atan2(a2, lo) - target;
+        double gHi = Math.atan2(a1, hi) - Math.atan2(a2, hi) - target;
+        if (gLo * gHi > 0) {
+            return Double.NaN;
+        }
+        for (int i = 0; i < 60; i++) {
+            double mid = 0.5 * (lo + hi);
+            double gMid = Math.atan2(a1, mid) - Math.atan2(a2, mid) - target;
+            if (gLo * gMid <= 0) {
+                hi = mid;
+            } else {
+                lo = mid;
+                gLo = gMid;
+            }
+        }
+        return 0.5 * (lo + hi) * (CALIBRATION_WIDTH / (double) frameWidth);
     }
 
     /** Predicted apparent radius at a known distance, for checking a focal guess. */

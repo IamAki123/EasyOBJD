@@ -12,11 +12,13 @@ import org.junit.Test;
 
 import static org.firstinspires.ftc.easyobjd.KnownGeometries.BALL_DIAMETER_IN;
 import static org.firstinspires.ftc.easyobjd.KnownGeometries.CALIBRATE_DISTANCE_IN;
+import static org.firstinspires.ftc.easyobjd.KnownGeometries.CAMERA_BEHIND_FRONT_IN;
 import static org.firstinspires.ftc.easyobjd.KnownGeometries.CAMERA_HEIGHT_IN;
 import static org.firstinspires.ftc.easyobjd.KnownGeometries.CAMERA_TILT_DEG;
 import static org.firstinspires.ftc.easyobjd.KnownGeometries.DEFAULT_FORWARD_OFFSET_IN;
 import static org.firstinspires.ftc.easyobjd.KnownGeometries.DEFAULT_RIGHT_OFFSET_IN;
 import static org.firstinspires.ftc.easyobjd.KnownGeometries.DEFAULT_YAW_DEG;
+import static org.firstinspires.ftc.easyobjd.KnownGeometries.FOCAL_AT_640;
 import static org.firstinspires.ftc.easyobjd.KnownGeometries.H_HIGH;
 import static org.firstinspires.ftc.easyobjd.KnownGeometries.H_LOW;
 import static org.firstinspires.ftc.easyobjd.KnownGeometries.HORIZONTAL_FOV_DEG;
@@ -56,21 +58,39 @@ public class SampleValuesTest {
         assertNotNull(hit);
         assertEquals("centered ball should be on the optical-axis X", 0, hit[0], INCH);
         assertEquals(CALIBRATE_DISTANCE_IN, hit[2], 0.6);
-        assertEquals(29.6, tilt, 1.0);
+        assertEquals(28.2, tilt, 1.0);
     }
 
     @Test
-    public void userConfig25DegTiltPutsCenteredBallAbout38InForward() {
+    public void userConfigTiltPutsCenteredBallOnFloorPlane() {
         double[] hit = LocalizationMath.pixelToFloor(
                 IMAGE_CX, IMAGE_CY, STREAM_WIDTH, STREAM_HEIGHT,
                 CAMERA_HEIGHT_IN, BALL_DIAMETER_IN,
-                0, HORIZONTAL_FOV_DEG, CAMERA_TILT_DEG);
+                FOCAL_AT_640, HORIZONTAL_FOV_DEG, CAMERA_TILT_DEG);
         assertNotNull(hit);
         double expectedZ = (CAMERA_HEIGHT_IN - BALL_DIAMETER_IN / 2.0)
                 / Math.tan(Math.toRadians(CAMERA_TILT_DEG));
         assertEquals(expectedZ, hit[2], INCH);
-        assertTrue("sample 25° is shallower than the 31 in on-axis tilt",
+        assertTrue("sample tilt is shallower than the 31 in on-axis tilt",
                 hit[2] > CALIBRATE_DISTANCE_IN);
+        assertTrue(LocalizationMath.inRange(hit[2], MAX_RANGE_IN));
+    }
+
+    @Test
+    public void userConfigMountRecoversTapedBallFromRobotFront() {
+        // Range Test point: near edge of the ball 29 in from the robot front.
+        double lensForward = 29.0 + CAMERA_BEHIND_FRONT_IN + BALL_DIAMETER_IN / 2.0;
+        double focal = LocalizationMath.focalPx(FOCAL_AT_640, HORIZONTAL_FOV_DEG, STREAM_WIDTH);
+        double drop = CAMERA_HEIGHT_IN - BALL_DIAMETER_IN / 2.0;
+        double aboveAxis = Math.toRadians(CAMERA_TILT_DEG) - Math.atan2(drop, lensForward);
+        double py = IMAGE_CY - focal * Math.tan(aboveAxis);
+
+        double[] hit = LocalizationMath.pixelToFloor(
+                IMAGE_CX, py, STREAM_WIDTH, STREAM_HEIGHT,
+                CAMERA_HEIGHT_IN, BALL_DIAMETER_IN,
+                FOCAL_AT_640, HORIZONTAL_FOV_DEG, CAMERA_TILT_DEG);
+        assertNotNull(hit);
+        assertEquals(29.0, hit[2] - CAMERA_BEHIND_FRONT_IN - BALL_DIAMETER_IN / 2.0, 1e-6);
     }
 
     @Test

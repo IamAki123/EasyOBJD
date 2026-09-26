@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.easyobjd.ClusterInfo;
 import org.firstinspires.ftc.easyobjd.EasyOBJD;
+import org.firstinspires.ftc.easyobjd.EasyOBJDConfig;
 import org.firstinspires.ftc.easyobjd.EasyOBJDPipeline;
 import org.firstinspires.ftc.easyobjd.OverlayMode;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -26,9 +27,13 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.List;
 
 /**
- * Copy this file into TeamCode. Preview is the 12×12 cluster grid (FULL
- * overlay). Touching yellow cells become one cluster; telemetry is occupied
- * cells and each cluster's camera X/Y (inches).
+ * Copy this file and {@code EasyOBJDUserConfig} into TeamCode. Preview is the
+ * 12×12 cluster grid (FULL overlay). Touching yellow cells become one cluster;
+ * telemetry is occupied cells and each cluster's camera X/Y (inches).
+ *
+ * <p>Camera height, tilt, and focal length come from {@code EasyOBJDUserConfig}.
+ * Inches are only right after you run <b>EasyOBJD Range Test</b> on your robot
+ * and paste its numbers there.</p>
  *
  * <p>Gamepad 1: D-pad up/down HSV, left/right MASK / GRID / FULL.</p>
  *
@@ -37,12 +42,9 @@ import java.util.List;
  * <pre>
  * maven { url = 'https://jitpack.io' }
  * implementation 'org.openftc:easyopencv:1.7.3'
- * implementation 'com.github.IamAki123:EasyOBJD:1.0.2'
+ * implementation 'com.github.IamAki123:EasyOBJD:1.0.3'
  * </pre>
  * Then File → Sync Project with Gradle Files.
- *
- * <p>Optional: copy {@code EasyOBJDUserConfig} and switch to
- * {@code EasyOBJD.createPipeline(EasyOBJDUserConfig.create())}.</p>
  */
 //noinspection SpellCheckingInspection
 @SuppressWarnings("unused")
@@ -66,7 +68,13 @@ public class EasyOBJDCluster extends OpMode {
         webcam = OpenCvCameraFactory.getInstance().createWebcam(
                 hardwareMap.get(WebcamName.class, WEBCAM_NAME), cameraMonitorViewId);
         pipeline = EasyOBJD.createPipeline();
-        pipeline.getConfig().overlayMode = OverlayMode.FULL;
+        EasyOBJDConfig cfg = pipeline.getConfig();
+        cfg.cameraHeightInches = EasyOBJDUserConfig.CAMERA_HEIGHT_INCHES;
+        cfg.cameraTiltDegrees = EasyOBJDUserConfig.CAMERA_TILT_DEGREES;
+        cfg.horizontalFovDegrees = EasyOBJDUserConfig.HORIZONTAL_FOV_DEGREES;
+        cfg.focalLengthPixelsAt640 = EasyOBJDUserConfig.FOCAL_LENGTH_PIXELS_AT_640;
+        cfg.ballDiameterInches = EasyOBJDUserConfig.BALL_DIAMETER_INCHES;
+        cfg.overlayMode = OverlayMode.FULL;
         webcam.setPipeline(pipeline);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -112,30 +120,30 @@ public class EasyOBJDCluster extends OpMode {
         if (!cameraInitialized) {
             telemetry.addLine("Camera starting...");
         }
-        telemetry.addLine("12x12 grid: touching yellow cells = one cluster");
-        telemetry.addLine("D-pad UP/DOWN HSV, LEFT/RIGHT overlay");
-        telemetry.addData("Overlay", pipeline.getConfig().overlayMode);
-        telemetry.addData("Grid", "%d x %d",
-                pipeline.getConfig().gridRows, pipeline.getConfig().gridCols);
-        telemetry.addData("HSV lower (H,S,V)", "%.0f, %.0f, %.0f",
-                pipeline.getConfig().hsvLower.val[0],
-                pipeline.getConfig().hsvLower.val[1],
-                pipeline.getConfig().hsvLower.val[2]);
-        telemetry.addData("HSV upper (H,S,V)", "%.0f, %.0f, %.0f",
-                pipeline.getConfig().hsvUpper.val[0],
-                pipeline.getConfig().hsvUpper.val[1],
-                pipeline.getConfig().hsvUpper.val[2]);
-        telemetry.addData("Occupied cells", pipeline.getOccupiedCount());
-        telemetry.addData("Clusters", pipeline.getClusterCount());
-        telemetry.addData("Balls", pipeline.getBallCount());
 
         List<ClusterInfo> clusters = pipeline.getClusters();
-        for (ClusterInfo cluster : clusters) {
-            telemetry.addLine("Cluster #" + cluster.id);
-            telemetry.addData("#" + cluster.id + " cells", cluster.cells.size());
-            telemetry.addData("#" + cluster.id + " X", "%.1f in", cluster.x);
-            telemetry.addData("#" + cluster.id + " Y", "%.1f in", cluster.y);
+        telemetry.addLine(String.format("CLUSTERS: %d    BALLS: %d",
+                clusters.size(), pipeline.getBallCount()));
+        if (clusters.isEmpty()) {
+            telemetry.addLine("  none - press D-pad UP to widen HSV");
         }
+        for (ClusterInfo cluster : clusters) {
+            double fromFront = cluster.y - EasyOBJDUserConfig.CAMERA_BEHIND_FRONT_INCHES
+                    - EasyOBJDUserConfig.BALL_DIAMETER_INCHES / 2.0;
+            telemetry.addLine(String.format("  #%d   %.1f in ahead   %.1f in %s",
+                    cluster.id, fromFront, Math.abs(cluster.x), cluster.x >= 0 ? "right" : "left"));
+        }
+
+        EasyOBJDConfig cfg = pipeline.getConfig();
+        telemetry.addLine("");
+        telemetry.addLine(String.format("Overlay: %s", cfg.overlayMode));
+        telemetry.addLine(String.format("HSV low:  %.0f, %.0f, %.0f",
+                cfg.hsvLower.val[0], cfg.hsvLower.val[1], cfg.hsvLower.val[2]));
+        telemetry.addLine(String.format("HSV high: %.0f, %.0f, %.0f",
+                cfg.hsvUpper.val[0], cfg.hsvUpper.val[1], cfg.hsvUpper.val[2]));
+        telemetry.addLine("");
+        telemetry.addLine("Ahead = robot front to near edge of ball");
+        telemetry.addLine("D-pad up/down: HSV   left/right: overlay");
         telemetry.update();
     }
 

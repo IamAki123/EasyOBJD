@@ -1,67 +1,100 @@
 # Tuning
 
-[README](../README.md) · [Sample OpMode](SampleOpMode.md) · [Troubleshooting](Troubleshooting.md)
+[README](../README.md) · [Troubleshooting](Troubleshooting.md)
 
-Tune in **practice**, not matches. Change **one** thing at a time. Geometry (height, tilt, focal, ball diameter) first if inches are wrong; HSV if the mask is wrong.
+$${\color{red}\LARGE\textbf{CONFIGURE YOUR ROBOT OR THE DISTANCES WILL BE WRONG}}$$
 
-```
-EasyOBJD.createPipeline()
-        │
-        ▼
-EasyOBJD Cluster  —  12×12 grid, D-pad HSV in the same OpMode
-        │
-        ▼
-optional UserConfig / Calibrate  —  saved HSV and camera inches
-```
+> [!CAUTION]
+> **EasyOBJD can't guess where your camera is.** Until you do section 1 on *your* robot, distances can be off by a foot or more. Being just 1° off on camera tilt moves a ball 4 ft away by about 2 in.
 
-## 1. HSV — EasyOBJD Cluster (or Tuner)
+Two things to tune, in this order:
 
-Driver Station → **EasyOBJD Cluster**. Preview starts on **FULL** (12×12 regions). D-pad left to **MASK** if you only want the color filter. D-pad HSV is on that OpMode.
+1. **Camera setup** — so the inches are right.
+2. **Color filter (HSV)** — so it sees the pieces.
 
-**EasyOBJD Tuner** is optional if you want MASK plus copy-paste `H_LOW`…`V_HIGH` lines.
+## 1. Configure your robot (about 5 minutes, required)
 
-| Button | Effect |
+**You need:** a tape measure, one ball, and `EasyOBJDUserConfig` + `EasyOBJDRangeTest` copied into TeamCode.
+
+### Measure two things
+
+Type these into `EasyOBJDUserConfig`:
+
+| Setting | Measure from → to |
 | --- | --- |
-| D-pad **up** | Wider (more pixels count as the piece) |
-| D-pad **down** | Tighter (fewer false positives) |
-| **X** | Cycle overlay (`MASK` / `GRID` / `BALLS` / `DISTANCES` / `FULL`) |
+| `CAMERA_HEIGHT_INCHES` | Floor → **center of the lens** |
+| `CAMERA_BEHIND_FRONT_INCHES` | Lens → **front of the robot** (along the floor) |
 
-When the mask is a clean silhouette of the piece (not the whole field, not a hollow ring):
+Also check `BALL_DIAMETER_INCHES` matches your real game piece.
 
-1. Read `H_LOW, S_LOW, V_LOW` and `H_HIGH, S_HIGH, V_HIGH` from telemetry.
-2. Paste them into `EasyOBJDUserConfig`.
-3. Rebuild.
+### Let Range Test solve the rest
 
-HSV is OpenCV 8-bit (**H 0–179**). Red wraps around 0/179 — use two ranges (`extraColorRange` inside `create()`).
+Run **EasyOBJD Range Test**. The top line always tells you what to do next.
 
-## 2. Inches — EasyOBJD Calibrate
+1. Put a ball **straight ahead**, about 2 ft from the front of the robot.
+2. Tape from the **front of the robot** to the **near edge of the ball**.
+3. D-pad until **TARGET** matches your tape. **Do this before pressing A.**
+4. Press **A** and hold still.
+5. Move the ball about 2 ft farther. Tape, set TARGET, press **A**.
+6. Copy the two lines under **PASTE INTO EasyOBJDUserConfig**. Rebuild.
 
-Assumes the mask already sees **one** ball.
+That's it. Run **EasyOBJD Cluster** and check a few distances against the tape.
 
-1. Tape **camera height** (tiles → **lens**, not the housing).
-2. Put one official-size ball on the floor, **image-centered**, at a known distance (default 31 in).
-3. Read suggested `FOCAL_LENGTH_PIXELS_AT_640` and `CAMERA_TILT_DEGREES`.
-4. Paste into `EasyOBJDUserConfig`.
-
-If the ball is **not** vertically centered, use a phone inclinometer on the housing for tilt instead of the suggested number.
-
-`BALL_DIAMETER_INCHES` must be the real piece. Size-based range scales with it. `MIN_BALL_DIAMETER_INCHES` is a hole / far-object cutoff (keep a bit larger than the official diameter).
-
-## 3. Suggested order on the field
-
-1. Tape lens height and tilt.
-2. Sample (D-pad HSV) until MASK looks right.
-3. Optional Calibrate until telemetry Y matches the tape at 2–3 distances.
-4. If X/Y twitch while driving, set `smoothingAlpha` on the library config (optional; 0 = raw).
-
-## What the library will not fix
-
-| Symptom | Usually |
+| Button | Does |
 | --- | --- |
-| Empty mask | HSV / lighting / glare |
-| Good mask, Y 1.5× too far | Focal or FOV wrong (old 700 px guess) |
-| Good mask, Y only wrong far away | Tilt / pitch, or no undistortion at the edges |
-| Level camera, no floor X/Y | Floor-plane needs downward tilt |
-| Two balls = one cluster | Fully merged silhouette |
+| D-pad up / down | Target ±1 in |
+| D-pad right / left | Target ±6 in |
+| A | Capture |
+| B | Start over |
+| Bumpers | Color filter wider / tighter |
+| X | Change preview |
 
-[Simple explanation](MathButDumbed.md) · [Formulas](Math.md)
+<details>
+<summary>Example numbers from one robot (don't copy these)</summary>
+
+```java
+public static double CAMERA_HEIGHT_INCHES = 18.0;
+public static double CAMERA_BEHIND_FRONT_INCHES = 6.5;
+public static double CAMERA_TILT_DEGREES = 15.58;
+public static double FOCAL_LENGTH_PIXELS_AT_640 = 710.4;
+```
+
+</details>
+
+### If it's still off
+
+| What happened | Fix |
+| --- | --- |
+| Pressed A before setting TARGET | Press **B**, set TARGET, press A |
+| Taped from the lens, not the robot front | TARGET is always **robot front → near edge of ball** |
+| Taped height to the top of the camera | Re-tape to the center of the lens |
+| Good up close, bad far away | Do the second capture farther out |
+| Camera got bumped or moved | Run Range Test again |
+
+## 2. Color filter (HSV)
+
+Run **EasyOBJD Cluster**.
+
+| Button | Does |
+| --- | --- |
+| D-pad up | Wider — sees more (use when pieces are missed) |
+| D-pad down | Tighter — sees less (use when the floor lights up) |
+| D-pad left / right | Change preview (MASK shows only what it sees) |
+
+When the MASK preview shows clean, solid pieces, copy the **HSV low / high** numbers from telemetry into `H_LOW`…`V_HIGH` in `EasyOBJDUserConfig`. Rebuild.
+
+<details>
+<summary>Notes for other colors</summary>
+
+- Hue is OpenCV's 0–179 scale, not 0–360.
+- Red wraps around 0/179, so it needs two ranges (`extraColorRange` inside `create()`).
+- **EasyOBJD Tuner** is an optional OpMode that shows only the mask while you adjust.
+
+</details>
+
+## Other tools
+
+- **EasyOBJD Calibrate** — older one-distance version of Range Test. Range Test is easier and more accurate.
+- **Jittery numbers while driving?** Set `smoothingAlpha` to about 0.3 on the library config (0 = raw).
+
+More fixes: [Troubleshooting](Troubleshooting.md) · How it works: [Simple explanation](MathButDumbed.md) · [Formulas](Math.md)

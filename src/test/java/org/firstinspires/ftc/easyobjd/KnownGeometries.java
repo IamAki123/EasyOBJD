@@ -24,11 +24,15 @@ final class KnownGeometries {
     /** {@code EasyOBJDUserConfig.MIN_BALL_DIAMETER_INCHES} */
     static final double MIN_BALL_DIAMETER_IN = 3.0;
     /** {@code EasyOBJDUserConfig.CAMERA_HEIGHT_INCHES} */
-    static final double CAMERA_HEIGHT_IN = 19.0;
+    static final double CAMERA_HEIGHT_IN = 18.0;
+    /** {@code EasyOBJDUserConfig.CAMERA_BEHIND_FRONT_INCHES} */
+    static final double CAMERA_BEHIND_FRONT_IN = 6.5;
     /** {@code EasyOBJDUserConfig.CAMERA_TILT_DEGREES} */
-    static final double CAMERA_TILT_DEG = 25.0;
+    static final double CAMERA_TILT_DEG = 15.58;
     /** {@code EasyOBJDUserConfig.HORIZONTAL_FOV_DEGREES} */
     static final double HORIZONTAL_FOV_DEG = 70.4;
+    /** {@code EasyOBJDUserConfig.FOCAL_LENGTH_PIXELS_AT_640} */
+    static final double FOCAL_AT_640 = 710.4;
     /** {@code EasyOBJDUserConfig.MAX_RANGE_INCHES} */
     static final double MAX_RANGE_IN = 60.0;
     /** {@code EasyOBJDCalibrateSample.KNOWN_DISTANCE_INCHES} */
